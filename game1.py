@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
+# coding: utf-8
 
 import sys
+import random
 from avkutil import color, Term
 
 """
@@ -11,9 +13,10 @@ black red green brown blue purple cyan lgray gray lred lgreen yellow lblue pink 
 
 term = Term()
 
-board = [' ']*75
+max_size = 75
+board = [' ']*max_size
 loc = 40
-player = color('@', "green")
+player = color(u'☺', "green")
 
 def getkey(n=1):
     s = b''
@@ -26,6 +29,7 @@ def flush():
 
 def display():
     term.clear()
+    # print("loc", loc)
     print(''.join(board))
     print("> ", end='')
     flush()
@@ -36,6 +40,20 @@ def down(): ...
 # if c == b's': down()
 
 # -----------------------------------------------------------------------------------------------
+
+"""
+Suggested features to add:
+
+    - handle end of game board
+    - second dimension
+    - additional levels
+    - coins / gems to gather
+    - teleport
+    - doors
+    - monsters
+    - robots
+    - show inventory
+"""
 
 
 def right():
@@ -52,6 +70,12 @@ def left():
     loc -= 1
     board[loc] = player
 
+def teleport():
+    global loc
+    board[loc] = ' '
+    loc = random.randint(0, max_size)
+    board[loc] = player
+
 def game1():
     """Play game."""
     board[loc] = player     # place player at original location
@@ -63,7 +87,8 @@ def game1():
         if c == b'q':       # Quit game
             break
 
-        if c == b'a': left()
+        if c == b'a': left()    # if key is 'a', move left
         if c == b'd': right()
+        if c == b't': teleport()
 
 game1()

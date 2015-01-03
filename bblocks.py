@@ -169,7 +169,7 @@ class BlockyBlocks(object):
 
 
 if __name__ == "__main__":
-    board   = BlocksBoard(size, Tile, num_grid=True, padding=padding, pause_time=pause_time)
+    board   = BlocksBoard(size, Tile, num_grid=False, padding=padding, pause_time=pause_time)
     bblocks = BlockyBlocks()
 
     try:

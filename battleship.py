@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
+# Imports {{{
 import sys
 from random import choice as rndchoice
 from time import sleep
@@ -34,6 +35,7 @@ commands    = {
                 b' ' : "move",
                 b'q' : "quit",
                 }
+# }}}
 
 
 class Tile(BaseTile, AttrToggles):
@@ -100,6 +102,7 @@ class Player(object):
         if not self.ai:
             for tile in B: tile.revealed = True
 
+    @property
     def enemy(self):
         return nextval(players, self)
 
@@ -109,7 +112,7 @@ class Battleship(object):
 
     def draw(self):
         p1, p2 = players
-        print(nl*5)
+        print(nl*24)
         p1.board.draw()
         print(divider)
         p2.board.draw()
@@ -118,11 +121,64 @@ class Battleship(object):
     def check_end(self, player):
         if all(ship.is_hit for ship in player.board.tiles("ship")):
             self.draw()
-            print(self.winmsg % player.enemy().num)
+            print(self.winmsg % player.enemy.num)
             sys.exit()
 
 
-class BasicInterface(object):
+class Commands:
+    player = None
+    commands = commands
+
+    def __getitem__(self, cmd):
+        return getattr(self, self.commands[cmd])
+
+    def move_dir(self, dir):
+        board = self.player.enemy.board
+        loc = board.nextloc(board.current, dir)
+        self.highlight(loc)
+
+    def down(self):
+        self.move_dir(Dir(0,1))
+    def up(self):
+        self.move_dir(Dir(0,-1))
+    def right(self):
+        self.move_dir(Dir(1,0))
+    def left(self):
+        self.move_dir(Dir(-1,0))
+
+    def toggle(self):
+        board = self.player.enemy.board
+        if board.hl_visible:
+            board.hl_visible = False
+            board.draw()
+        else:
+            i = board[board.current]
+            board[board.current] = '*'
+            board.draw()
+            board[board.current] = i
+            board.hl_visible = True
+
+    def move(self):
+        board = self.player.enemy.board
+        loc = board.current
+        board.hl_visible = False
+        return board[loc]
+
+    def highlight(self, loc):
+        if not loc: return
+        board = self.player.enemy.board
+        i = board[loc]
+        board[loc] = '*'
+        bship.draw()
+        board[loc] = i
+        board.current = loc
+        board.hl_visible = True
+
+    def quit(self):
+        sys.exit()
+
+
+class BasicInterface:
     def __init__(self):
         self.term = Term()
 
@@ -134,80 +190,27 @@ class BasicInterface(object):
             bship.draw()
             tile = self.ai_move(player) if player.ai else self.get_move(player)
             tile.hit()
-            bship.check_end(player.enemy())
+            bship.check_end(player.enemy)
 
     def get_move(self, player):
         """Get user command and return the tile to attack."""
-        self.player = player
+        commands.player = player
         while True:
             cmd = self.term.getch()
-            if cmd in commands:
-                val = getattr(self, commands[cmd])()
-                if commands[cmd] == "move" and val:
+            try:
+                val = commands[cmd]()
+                if val:
                     return val
-            else:
+            except KeyError:
                 print("unknown command:", cmd)
-        # return player.enemy().board[ self.textinput.getloc() ]
-
-    def down(self):
-        board = self.player.enemy().board
-        loc = board.nextloc(board.current, Dir(0,1))
-        self.highlight(loc)
-
-    def highlight(self, loc):
-        if not loc: return
-        board = self.player.enemy().board
-        i = board[loc]
-        board[loc] = '*'
-        # board.draw()
-        bship.draw()
-        board[loc] = i
-        board.current = loc
-        board.hl_visible = True
-
-    def toggle(self):
-        board = self.player.enemy().board
-        if board.hl_visible:
-            board.hl_visible = False
-            board.draw()
-        else:
-            i = board[board.current]
-            board[board.current] = '*'
-            board.draw()
-            board[board.current] = i
-            board.hl_visible = True
-
-    def up(self):
-        board = self.player.enemy().board
-        loc = board.nextloc(board.current, Dir(0,-1))
-        self.highlight(loc)
-
-    def right(self):
-        board = self.player.enemy().board
-        loc = board.nextloc(board.current, Dir(1,0))
-        self.highlight(loc)
-
-    def left(self):
-        board = self.player.enemy().board
-        loc = board.nextloc(board.current, Dir(-1,0))
-        self.highlight(loc)
-
-    def move(self):
-        board = self.player.enemy().board
-        loc = board.current
-        board.hl_visible = False
-        return board[loc]
-            # print("Invalid move")
 
     def ai_move(self, player):
         """Very primitive 'AI', always hits a random location."""
-        return player.enemy().board.random_unhit()
-
-    def quit(self):
-        sys.exit()
+        return player.enemy.board.random_unhit()
 
 
 if __name__ == "__main__":
+    commands = Commands()
     players = [Player(p) for p in players]
     bship   = Battleship()
 

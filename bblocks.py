@@ -86,6 +86,58 @@ class BlocksBoard(Board):
         return bool(tile.player==player or not tile.player)
 
 
+class Commands:
+    player = None
+    commands = commands
+
+    def __getitem__(self, cmd):
+        return getattr(self, self.commands[cmd])
+
+    def move_dir(self, dir):
+        loc = board.nextloc(board.current, dir)
+        self.highlight(loc)
+
+    def down(self):
+        self.move_dir(Dir(0,1))
+    def up(self):
+        self.move_dir(Dir(0,-1))
+    def right(self):
+        self.move_dir(Dir(1,0))
+    def left(self):
+        self.move_dir(Dir(-1,0))
+
+    def toggle(self):
+        if board.hl_visible:
+            board.hl_visible = False
+            board.draw()
+        else:
+            i = board[board.current]
+            board[board.current] = '*'
+            board.draw()
+            board[board.current] = i
+            board.hl_visible = True
+
+    def move(self):
+        loc = board.current
+        if board.valid_move(self.player, board[loc]):
+            board.hl_visible = False
+            return board[loc]
+        else:
+            print("Invalid move")
+
+    def highlight(self, loc):
+        if not loc: return
+        i = board[loc]
+        board[loc] = '*'
+        board.draw()
+        board[loc] = i
+        board.current = loc
+        board.hl_visible = True
+
+    def quit(self):
+        sys.exit()
+
+
 class BlockyBlocks(object):
     winmsg  = "player %s wins!"
     counter = Loop(range(check_moves))
@@ -101,74 +153,26 @@ class BlockyBlocks(object):
             sys.exit()
 
     def run(self):
-        self.textinput = TextInput(board=board)
-
         for p in cycle(players.keys()):
             board.draw()
             tile = board.ai_move(p) if p in ai_players else self.get_move(p)
             tile.increment(p)
             self.check_end(p)
 
-    def down(self):
-        loc = board.nextloc(board.current, Dir(0,1))
-        self.highlight(loc)
-
-    def highlight(self, loc):
-        if not loc: return
-        i = board[loc]
-        board[loc] = '*'
-        board.draw()
-        board[loc] = i
-        board.current = loc
-        board.hl_visible = True
-
-    def toggle(self):
-        if board.hl_visible:
-            board.hl_visible = False
-            board.draw()
-        else:
-            i = board[board.current]
-            board[board.current] = '*'
-            board.draw()
-            board[board.current] = i
-            board.hl_visible = True
-
-    def up(self):
-        loc = board.nextloc(board.current, Dir(0,-1))
-        self.highlight(loc)
-
-    def right(self):
-        loc = board.nextloc(board.current, Dir(1,0))
-        self.highlight(loc)
-
-    def left(self):
-        loc = board.nextloc(board.current, Dir(-1,0))
-        self.highlight(loc)
-
-    def move(self):
-        loc = board.current
-        if board.valid_move(self.cur_player, board[loc]):
-            board.hl_visible = False
-            return board[loc]
-        else:
-            print("Invalid move")
-
     def get_move(self, player):
-        self.cur_player = player
+        commands.player = player
         while True:
             cmd = self.term.getch()
-            if cmd in commands:
-                val = getattr(self, commands[cmd])()
-                if commands[cmd] == "move" and val:
+            try:
+                val = commands[cmd]()
+                if val:
                     return val
-            else:
+            except KeyError:
                 print("unknown command:", cmd)
-
-    def quit(self):
-        sys.exit()
 
 
 if __name__ == "__main__":
+    commands = Commands()
     board   = BlocksBoard(size, Tile, num_grid=False, padding=padding, pause_time=pause_time)
     bblocks = BlockyBlocks()
 

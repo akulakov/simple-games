@@ -56,6 +56,7 @@ class Tile(BaseTile, AttrToggles):
 class Blank(Tile):
     char = blank
 
+
 class Ship(Tile):
     char = shipchar
 

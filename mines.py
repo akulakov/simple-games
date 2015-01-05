@@ -68,7 +68,7 @@ class Commands:
         return board[loc]
 
     def blink_tile(self, tile):
-        tile.blank = not tile.blank
+        tile.hidden = not tile.hidden
         sleep(blink_speed)
         board.draw()
 
@@ -93,9 +93,6 @@ class Commands:
 
 class BasicInterface:
     def run(self):
-        # allow entering of multiple (up to 10) locations
-        # pattern        = "%s? loc%s" % (mark_key, " loc?"*9)
-        # self.textinput = TextInput(pattern, board, singlechar_cmds=True)
         self.term = Term()
         while True:
             board.draw()
@@ -112,17 +109,6 @@ class BasicInterface:
                     return val
             except KeyError:
                 print("unknown command:", cmd)
-
-    def make_move(self):
-        "UNUSED."
-        cmd  = self.textinput.getinput()
-        mark = bool(first(cmd) == mark_key)
-        if mark: cmd.pop(0)
-
-        for loc in cmd:
-            tile = board[loc]
-            tile.toggle_mark() if mark else board.reveal(tile)
-            mines.check_end(tile)
 
 
 if __name__ == "__main__":

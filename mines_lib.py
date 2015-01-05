@@ -2,7 +2,7 @@
 
 import sys
 from random import choice as rndchoice
-from time import time
+from time import time, sleep
 
 from utils import AttrToggles, timefmt
 from board import Board, BaseTile, Loc
@@ -15,15 +15,14 @@ numbers    = "①②③④⑤⑥⑦⑧"
 
 
 class Tile(BaseTile, AttrToggles):
-    revealed = mine = marked = blank = False
+    revealed = mine = marked = False
     hidden   = True
     number   = None
 
     attribute_toggles = [("hidden", "revealed")]
 
     def __repr__(self):
-        if   self.blank  : return hiddenchar    # hiddenchar instead of blank to allow blinking
-        elif self.hidden : return hiddenchar
+        if   self.hidden : return hiddenchar
         elif self.marked : return flag
         elif self.mine   : return minechar
         else             : return self.num()
@@ -83,7 +82,7 @@ class MinesBoard(Board):
 class Mines(object):
     start    = time()
     win_msg  = "\n All mines cleared! (%s)"
-    lose_msg = "\n MINE. OH NO. END."
+    lose_msg = "\n MINE. oh no. END."
 
     def __init__(self, board):
         self.board = board
@@ -101,9 +100,11 @@ class Mines(object):
             B.reveal(tile)
         B.draw()
         print(self.lose_msg)
+        sleep(1)
         sys.exit()
 
     def game_won(self):
         self.board.draw()
         print( self.win_msg % timefmt(time() - self.start) )
+        sleep(1)
         sys.exit()

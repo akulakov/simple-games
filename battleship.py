@@ -11,19 +11,20 @@ from utils import TextInput, AttrToggles, range1, nextval, first, nl
 from board import Board, BaseTile, Loc, Dir
 from avkutil import Term
 
-size       = 5, 5
-num_ships  = 3
-pause_time = 0.3
+size        = 5, 5
+num_ships   = 3
+pause_time  = 0.3
+blink_speed = 0.01
 
-blank      = '.'
-shipchar   = '▢'
-sunkship   = '☀'
-hitchar    = '♈'
-padding    = 2, 1
+blank       = '.'
+shipchar    = '▢'
+sunkship    = '☀'
+hitchar     = '♈'
+padding     = 2, 1
 
-players    = [1, 2]
-ai_players = [1, ]
-divider    = '-' * (size[0] * 4 + 6)
+players     = [1, 2]
+ai_players  = [1, ]
+divider     = '-' * (size[0] * 4 + 6)
 
 commands    = {
                 b'a' : "left",
@@ -35,12 +36,13 @@ commands    = {
                 b' ' : "move",
                 b'q' : "quit",
                 }
+
 # }}}
 
 
 class Tile(BaseTile, AttrToggles):
     """Tile that may be a ship or blank space (water)."""
-    ship              = blank = is_hit = revealed = False
+    ship              = is_hit = revealed = blank = False
     hidden            = True
     attribute_toggles = [("hidden", "revealed")]
 
@@ -191,7 +193,15 @@ class BasicInterface:
             bship.draw()
             tile = self.ai_move(player) if player.ai else self.get_move(player)
             tile.hit()
+            bship.draw()
+            for _ in range(2):
+                self.blink_tile(tile)
             bship.check_end(player.enemy)
+
+    def blink_tile(self, tile):
+        tile.hidden = not tile.hidden
+        sleep(blink_speed)
+        bship.draw()
 
     def get_move(self, player):
         """Get user command and return the tile to attack."""

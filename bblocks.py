@@ -16,6 +16,7 @@ players     = {1: "➀➁➂➃", 2: "➊➋➌➍"}
 ai_players  = [1, ]
 check_moves = 15
 padding     = 2, 1
+blink_speed = 0.1
 
 commands    = {
                 b'a' : "left",
@@ -28,11 +29,14 @@ commands    = {
                 b'q' : "quit",
                 }
 
+p=print
 
 class Tile(BaseTile):
-    num = maxnum = player = None
+    num = maxnum = player = blank = None
 
     def __repr__(self):
+        if self.blank:
+            return ' '
         if self.player:
             n = players[self.player][self.num-1]
             # need separate representations of 'maxnum' for both players
@@ -42,22 +46,42 @@ class Tile(BaseTile):
         else:
             return str(self.num)
 
-    def increment(self, player):
+    def increment(self, player, initial=True):
         """ Increment tile number; if number wraps, increment neighbour tiles.
-            `bblocks.counter` is used to avoid infinite recursion loops.
-        """
-        if not bblocks.counter.next():
-            bblocks.check_end(player)
 
-        if self._increment(player):
+            `bblocks.counter` is used to avoid infinite recursion loops.
+            IF initial, get list of tiles, and blink all of them + original tile; otherwise, return list of tiles
+        """
+        end = False
+        if not bblocks.counter.next():
+            end = bblocks.check_end(player)
+
+        tiles = []
+        do_wrap = self._increment(player)
+        if do_wrap:
             for tile in board.cross_neighbours(self):
-                tile.increment(player)
-            board.draw()
+                tiles.append(tile)
+                tiles.extend(tile.increment(player, initial=False))
+
+        if initial:
+            for _ in range(2):
+                self.blink_tiles(set(tiles + [self]))
+            if end:
+                sleep(2)
+                bblocks.end(player)
+        else:
+            return tiles
+
+    def blink_tiles(self, tiles):
+        for tile in tiles:
+            tile.blank = not tile.blank
+        sleep(blink_speed)
+        board.draw()
 
     def _increment(self, player):
         self.player = player
         self.num.next()
-        return bool(self.num == 1)
+        return bool(self.num == 1)  # return True if wrapping around
 
 
 class BlocksBoard(Board):
@@ -147,17 +171,20 @@ class BlockyBlocks(object):
 
     def check_end(self, player):
         """Check if game is finished."""
-        if all(tile.player==player for tile in board):
-            board.draw()
-            print(nl, self.winmsg % player)
-            sys.exit()
+        return all(tile.player==player for tile in board)
+
+    def end(self, player):
+        board.draw()
+        print(nl, self.winmsg % player)
+        sys.exit()
 
     def run(self):
         for p in cycle(players.keys()):
             board.draw()
             tile = board.ai_move(p) if p in ai_players else self.get_move(p)
             tile.increment(p)
-            self.check_end(p)
+            if self.check_end(p):
+                self.end(p)
 
     def get_move(self, player):
         commands.player = player

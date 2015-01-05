@@ -15,14 +15,15 @@ numbers    = "①②③④⑤⑥⑦⑧"
 
 
 class Tile(BaseTile, AttrToggles):
-    revealed = mine = marked = False
+    revealed = mine = marked = blank = False
     hidden   = True
     number   = None
 
     attribute_toggles = [("hidden", "revealed")]
 
     def __repr__(self):
-        if   self.hidden : return hiddenchar
+        if   self.blank  : return hiddenchar    # hiddenchar instead of blank to allow blinking
+        elif self.hidden : return hiddenchar
         elif self.marked : return flag
         elif self.mine   : return minechar
         else             : return self.num()
@@ -82,7 +83,7 @@ class MinesBoard(Board):
 class Mines(object):
     start    = time()
     win_msg  = "\n All mines cleared! (%s)"
-    lose_msg = "\n KABOOM. END."
+    lose_msg = "\n MINE. OH NO. END."
 
     def __init__(self, board):
         self.board = board

@@ -10,12 +10,13 @@ from utils import TextInput, nl, first
 from mines_lib import MinesBoard, Mines, Tile
 from avkutil import Term
 
-size       = 6, 6
-num_mines  = randint(4, 8)
-mark_key   = 'm'
-padding    = 2, 1
+size        = 6, 6
+num_mines   = randint(4, 8)
+mark_key    = 'm'
+padding     = 2, 1
+blink_speed = 0.1
 
-commands   = {
+commands    = {
                 b'a' : "left",
                 b'd' : "right",
                 b'w' : "up",
@@ -62,7 +63,14 @@ class Commands:
         loc = board.current
         board.hl_visible = False
         board.reveal(board[loc])
+        for _ in range(2):
+            self.blink_tile(board[loc])
         return board[loc]
+
+    def blink_tile(self, tile):
+        tile.blank = not tile.blank
+        sleep(blink_speed)
+        board.draw()
 
     def mark(self):
         loc = board.current

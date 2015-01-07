@@ -10,7 +10,7 @@ from utils import Loop, TextInput, range1, first, nl
 from board import Board, BaseTile, Loc, Dir
 from avkutil import Term
 
-size        = 5
+size        = 3
 pause_time  = 0.2
 players     = {1: "➀➁➂➃", 2: "➊➋➌➍"}
 ai_players  = [1, ]
@@ -58,25 +58,24 @@ class Tile(BaseTile):
 
         tiles = []
         do_wrap = self._increment(player)
-        if do_wrap:
+        if do_wrap and not end:
             for tile in board.cross_neighbours(self):
                 tiles.append(tile)
                 tiles.extend(tile.increment(player, initial=False))
 
-        if initial:
-            for _ in range(2):
-                self.blink_tiles(set(tiles + [self]))
+        if initial or end:
+            self.blink_tiles(set(tiles + [self]))
             if end:
-                sleep(2)
                 bblocks.end(player)
         else:
             return tiles
 
     def blink_tiles(self, tiles):
-        for tile in tiles:
-            tile.blank = not tile.blank
-        sleep(blink_speed)
-        board.draw()
+        for _ in range(2):
+            for tile in tiles:
+                tile.blank = not tile.blank
+            sleep(blink_speed)
+            board.draw()
 
     def _increment(self, player):
         self.player = player
@@ -99,9 +98,9 @@ class BlocksBoard(Board):
         """Randomly choose between returning the move closest to completing a tile or a random move."""
         tiles = [t for t in self if self.valid_move(player, t)]
 
+        # tiles.sort(key=to_max)
         to_max = lambda t: t.maxnum - t.num
-        tiles.sort(key=to_max)
-        loc = rndchoice( [first(tiles), rndchoice(tiles)] )
+        loc = rndchoice( [min(tiles, key=to_max), rndchoice(tiles)] )
         if loc == self.current:
             self.hl_visible = False
         return loc
@@ -176,6 +175,7 @@ class BlockyBlocks(object):
     def end(self, player):
         board.draw()
         print(nl, self.winmsg % player)
+        sleep(2)
         sys.exit()
 
     def run(self):

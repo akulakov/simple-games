@@ -19,14 +19,14 @@ offsets = (0, 3, 6)
 puzzles    = [".13.....22.....48....7...19...9..8..7......2....3.......263.9..4.9.7.6....149...8"]
 
 commands    = {
-                b'a' : "left",
-                b'd' : "right",
-                b'w' : "up",
-                b's' : "down",
-                b't' : "toggle",
-                b'\n': "move",
-                b' ' : "move",
-                b'q' : "quit",
+                'a' : "left",
+                'd' : "right",
+                'w' : "up",
+                's' : "down",
+                't' : "toggle",
+                '\n': "move",
+                ' ' : "move",
+                'q' : "quit",
                 }
 
 # }}}

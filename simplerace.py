@@ -127,7 +127,7 @@ class BasicInterface(object):
 
         while True:
             val = self.term.getch()
-            if val==b'q':
+            if val=='q':
                 sys.exit()
             try:
                 return valid_moves[int(val)-1]
@@ -142,5 +142,7 @@ if __name__ == "__main__":
     dice    = Dice(num=1)     # one 6-sided dice
     shuffle(players)
 
-    try: BasicInterface().run()
-    except KeyboardInterrupt: pass
+    try:
+        BasicInterface().run()
+    except KeyboardInterrupt:
+        pass

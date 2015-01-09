@@ -239,7 +239,10 @@ class Term:
         self.curses()
         c = os.read(self.fd, 1)
         self.normal()
-        return c
+        try:
+            return unicode(c)[2]
+        except NameError:
+            return str(c)[2]
 
     def size(self):
         """Return terminal size as tuple (height, width)."""

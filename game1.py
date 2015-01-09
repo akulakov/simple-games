@@ -19,7 +19,7 @@ loc = 40
 player = color(u'☺', "green")
 
 def getkey(n=1):
-    s = b''
+    s = ''
     for _ in range(n):
         s += term.getch()
     return s
@@ -36,8 +36,6 @@ def display():
 
 def up(): ...
 def down(): ...
-# if c == b'w': up()
-# if c == b's': down()
 
 # -----------------------------------------------------------------------------------------------
 
@@ -84,11 +82,11 @@ def game1():
         display()           # show playing board
         c = term.getch()    # get user input
 
-        if c == b'q':       # Quit game
+        if c == 'q':       # Quit game
             break
 
-        if c == b'a': left()    # if key is 'a', move left
-        if c == b'd': right()
-        if c == b't': teleport()
+        if c == 'a': left()    # if key is 'a', move left
+        if c == 'd': right()
+        if c == 't': teleport()
 
 game1()

@@ -19,14 +19,14 @@ padding     = 2, 1
 blink_speed = 0.1
 
 commands    = {
-                b'a' : "left",
-                b'd' : "right",
-                b'w' : "up",
-                b's' : "down",
-                b't' : "toggle",
-                b'\n': "move",
-                b' ' : "move",
-                b'q' : "quit",
+                'a' : "left",
+                'd' : "right",
+                'w' : "up",
+                's' : "down",
+                't' : "toggle",
+                '\n': "move",
+                ' ' : "move",
+                'q' : "quit",
                 }
 
 p=print

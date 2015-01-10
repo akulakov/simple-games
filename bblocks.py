@@ -10,7 +10,7 @@ from utils import Loop, TextInput, range1, first, nl
 from board import Board, BaseTile, Loc, Dir
 from avkutil import Term
 
-size        = 3
+size        = 6
 pause_time  = 0.2
 players     = {1: "➀➁➂➃", 2: "➊➋➌➍"}
 ai_players  = [1, ]

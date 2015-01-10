@@ -3,6 +3,7 @@
 
 import sys
 from random import choice as rndchoice
+from random import randrange
 from itertools import cycle
 from time import sleep
 
@@ -10,15 +11,16 @@ from utils import Loop, TextInput, range1, first, nl
 from board import Board, BaseTile, Loc, Dir
 from avkutil import Term
 
-size        = 6
-pause_time  = 0.2
-players     = {1: "➀➁➂➃", 2: "➊➋➌➍"}
-ai_players  = [1, ]
-check_moves = 15
-padding     = 2, 1
-blink_speed = 0.1
+size             = 6
+pause_time       = 0.2
+players          = {1: "➀➁➂➃", 2: "➊➋➌➍"}
+ai_players       = [1, ]
+check_moves      = 15
+padding          = 2, 1
+blink_speed      = 0.1
+randomize_option = False
 
-commands    = {
+commands         = {
                 'a' : "left",
                 'd' : "right",
                 'w' : "up",
@@ -93,6 +95,9 @@ class BlocksBoard(Board):
         for tile in self:
             tile.maxnum = len( [self.valid(nbloc) for nbloc in neighbours(tile)] )
             tile.num    = Loop(range1(tile.maxnum))
+            if randomize_option:
+                for _ in range(randrange(0, tile.maxnum)):
+                    tile.num.next()
 
     def ai_move(self, player):
         """Randomly choose between returning the move closest to completing a tile or a random move."""
@@ -199,6 +204,10 @@ class BlockyBlocks(object):
 
 
 if __name__ == "__main__":
+    arg = sys.argv[1:]
+    if arg and arg[0] == '-r':
+        randomize_option = True
+
     commands = Commands()
     board   = BlocksBoard(size, Tile, num_grid=False, padding=padding, pause_time=pause_time)
     bblocks = BlockyBlocks()

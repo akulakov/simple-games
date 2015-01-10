@@ -30,7 +30,6 @@ class Loop(object):
         self.next(index)
 
     def next(self, n=1):
-        # len=3, last=2, cur=0, next(7) ; 1201201 7%3: cur+n%len
         if n < 0:
             self.prev(abs(n))
         self.index = (self.index + n) % self.length
@@ -38,14 +37,7 @@ class Loop(object):
         return self.item
 
     def prev(self, n=1):
-        # len=3, last=2, cur=1, prev(5) ; 02102 -4%3: cur+n%len  3 + -1
-        # print("n", n)
-        # print("self.length", self.length)
-        # print( abs((self.index - n) % self.length) )
         self.index = abs((self.index - n) % self.length)
-        # self.index = self.length - abs((self.index - n) % self.length)
-        # print("self.index", self.index)
-        # self.index = self.index-1 if self.index > 0 else self.lastind
         self.update_attr()
         return self.item
 

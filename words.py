@@ -24,10 +24,11 @@ blink_speed = 0.1
 
 move_cmds = (' ', '\n')
 commands    = {
-                'a' : "left",
-                'd' : "right",
-                'w' : "up",
-                's' : "down",
+                r'\x1b[D' : "left",
+                r'\x1b[C' : "right",
+                r'\x1b[A' : "up",
+                r'\x1b[B' : "down",
+
                 'r' : "random",
                 '\n': "move",
                 ' ' : "move",
@@ -56,10 +57,8 @@ class Commands(BaseCommands):
         words.display()
 
     def move(self):
-        print("> ", end='')
-        sys.stdout.flush()
-        c = self.term.getch()
-        words.guess(str(c))
+        c = self.term.getch("> ")
+        words.guess(c)
         words.hl_visible = False
         words.display()
 

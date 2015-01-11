@@ -237,12 +237,12 @@ class Term:
             stdout.write(prompt)
             stdout.flush()
         self.curses()
-        c = os.read(self.fd, 1)
+        c = os.read(self.fd, 3)
         self.normal()
         try:
-            return unicode(c)[2]
+            return unicode(c)[2:-1]
         except NameError:
-            return str(c)[2]
+            return str(c)[2:-1]
 
     def size(self):
         """Return terminal size as tuple (height, width)."""

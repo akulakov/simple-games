@@ -20,7 +20,7 @@ padding          = 2, 1
 blink_speed      = 0.1
 randomize_option = False
 
-commands         = {
+commands = {
                 'a' : "left",
                 'd' : "right",
                 'w' : "up",
@@ -88,9 +88,9 @@ class Tile(BaseTile):
 class BlocksBoard(Board):
     def __init__(self, *args, **kwargs):
         super(BlocksBoard, self).__init__(*args, **kwargs)
-        neighbours = self.neighbour_cross_locs
         self.current = Loc(0,0)
         self.hl_visible = False
+        neighbours = self.neighbour_cross_locs
 
         for tile in self:
             tile.maxnum = len( [self.valid(nbloc) for nbloc in neighbours(tile)] )

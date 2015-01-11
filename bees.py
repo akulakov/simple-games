@@ -7,7 +7,7 @@ from time import sleep
 init_bees   = 100
 init_wasps  = 5
 num_flowers = 500
-turns       = 500
+turns       = 100
 
 
 class Hive(object):
@@ -51,8 +51,10 @@ class Wasp(object):
         if hive.bees:
             bee = choice(hive.bees)
             if random() >= 0.8:
-                if random() >= 0.2 : hive.bees.remove(bee)
-                else               : wasps.remove(self)
+                if random() >= 0.2:
+                    hive.bees.remove(bee)
+                else:
+                    wasps.remove(self)
 
 def main():
     for turn in range(turns):
@@ -60,7 +62,8 @@ def main():
             x.go()
 
         hive.new_bee()
-        if random() >= 0.95: wasps.append(Wasp())
+        if random() >= 0.95:
+            wasps.append(Wasp())
 
         status = "[%3s]   %6s honey   %3s bees   %d wasps"
         print(status % (turn, hive.honey, len(hive.bees), len(wasps)))

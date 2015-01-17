@@ -7,7 +7,7 @@ from random import choice as rndchoice
 from time import sleep
 from itertools import cycle
 
-from utils import TextInput, AttrToggles, range1, nextval, first, nl
+from utils import AttrToggles, range1, nextval, first, nl
 from board import Board, BaseTile, Loc, Dir
 from avkutil import Term
 
@@ -103,7 +103,8 @@ class Player(object):
                 B[loc] = Ship(loc)
 
         if not self.ai:
-            for tile in B: tile.revealed = True
+            for tile in B:
+                tile.revealed = True
 
     @property
     def enemy(self):
@@ -187,8 +188,6 @@ class BasicInterface:
 
     def run(self):
         # board is only used to check if location is within range (using board.valid())
-        self.textinput = TextInput( board=first(players).board )
-
         for player in cycle(players):
             bship.draw()
             tile = self.ai_move(player) if player.ai else self.get_move(player)

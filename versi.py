@@ -13,10 +13,10 @@ from board import Board, Loc, BaseTile
 from commands import BaseCommands
 from avkutil import Term
 
-size         = 4
+size         = 12
 player_chars = '▣⎔'
-ai_players   = '▣⎔'
-ai_players   = '⎔'
+# ai_players   = '▣⎔'
+ai_players   = ''
 blank        = '.'
 padding      = 4, 2
 pause_time   = 0.3
@@ -197,7 +197,7 @@ class BasicInterface(object):
                 val = commands[val]()
                 if val:
                     return val
-            except IndexError:
+            except KeyError:
                 print("Invalid move")
 
     def blink_tiles(self, tiles):

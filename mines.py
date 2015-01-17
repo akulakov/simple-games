@@ -1,26 +1,27 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
+# TODO: calc # of mines based on board size?
+#   generate map after first click?
 import sys
 from random import randint
 from time import sleep
 
 from board import Dir
-from utils import TextInput, nl, first
 from mines_lib import MinesBoard, Mines, Tile
 from avkutil import Term
 
-size        = 6, 6
-num_mines   = randint(4, 8)
-mark_key    = 'm'
+size        = 12
+num_mines   = randint(8, 16)
 padding     = 2, 1
 blink_speed = 0.1
 
 commands    = {
-                'a' : "left",
-                'd' : "right",
-                'w' : "up",
-                's' : "down",
+                r'\x1b[D' : "left",
+                r'\x1b[C' : "right",
+                r'\x1b[A' : "up",
+                r'\x1b[B' : "down",
+
                 't' : "toggle",
                 'm' : "mark",
                 '\n': "move",

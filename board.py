@@ -65,6 +65,8 @@ class BaseBoard(object):
         self.pause_time  = pause_time
         self.screen_sep  = screen_sep
         self.init_tiles  = False
+        self.current     = Loc(0,0)
+        self.hl_visible  = False
 
         self.tiletpl     = "%%%ds" % (padding[0] + 1)
         self.directions()

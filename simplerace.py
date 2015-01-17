@@ -7,7 +7,7 @@ from random import shuffle
 from time import sleep
 from itertools import cycle
 
-from utils import Dice, TextInput, sjoin, lastind, first, enumerate1, getitem, nl, space, grouper
+from utils import Dice, sjoin, lastind, first, enumerate1, getitem, nl, space, grouper
 from avkutil import Term
 
 length       = 35
